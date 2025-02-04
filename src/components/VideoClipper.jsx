@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/browser';
 export default function VideoClipper() {
   const [videoUrl, setVideoUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [clipResult, setClipResult] = useState(null);
+  const [clips, setClips] = useState([]);
 
   const handleClip = async () => {
     if (!videoUrl.trim()) {
@@ -13,12 +13,16 @@ export default function VideoClipper() {
     }
     console.log('Generating video clips for URL:', videoUrl);
     setIsLoading(true);
-    setClipResult(null);
+    setClips([]);
     try {
+      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const result = 'Clips generated successfully! Check out your clips at https://example.com/clips/456';
-      setClipResult(result);
-      console.log(result);
+      const generatedClips = [
+        { id: '1', name: 'Clip 1', url: 'https://example.com/clips/clip1.mp4' },
+        { id: '2', name: 'Clip 2', url: 'https://example.com/clips/clip2.mp4' },
+      ];
+      setClips(generatedClips);
+      console.log('Clips generated:', generatedClips);
     } catch (error) {
       console.error('Error generating clips:', error);
       Sentry.captureException(error);
@@ -46,7 +50,22 @@ export default function VideoClipper() {
           {isLoading ? 'Processing...' : 'Generate Clips'}
         </button>
       </div>
-      {clipResult && <div className="p-4 bg-purple-100 text-purple-800 rounded">{clipResult}</div>}
+      {clips.length > 0 && (
+        <div className="space-y-4">
+          {clips.map((clip) => (
+            <div key={clip.id} className="p-4 bg-purple-100 text-purple-800 rounded flex items-center justify-between">
+              <span>{clip.name}</span>
+              <a
+                href={clip.url}
+                download={`${clip.name}.mp4`}
+                className="cursor-pointer bg-purple-700 text-white px-4 py-2 rounded"
+              >
+                Download
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

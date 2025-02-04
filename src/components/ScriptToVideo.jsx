@@ -15,11 +15,11 @@ export default function ScriptToVideo() {
     setIsLoading(true);
     setVideoResult(null);
     try {
-      // Simulate API call
+      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const result = 'Video generated successfully! Watch your video at https://example.com/video/123';
+      const result = { message: 'Video generated successfully!', videoUrl: 'https://example.com/video/123.mp4' };
       setVideoResult(result);
-      console.log(result);
+      console.log(result.message, result.videoUrl);
     } catch (error) {
       console.error('Error generating video:', error);
       Sentry.captureException(error);
@@ -46,7 +46,18 @@ export default function ScriptToVideo() {
           {isLoading ? 'Generating...' : 'Generate Video'}
         </button>
       </div>
-      {videoResult && <div className="p-4 bg-green-100 text-green-800 rounded">{videoResult}</div>}
+      {videoResult && (
+        <div className="p-4 bg-green-100 text-green-800 rounded">
+          <p>{videoResult.message}</p>
+          <a
+            href={videoResult.videoUrl}
+            download="video.mp4"
+            className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded mt-2 inline-block"
+          >
+            Download Video
+          </a>
+        </div>
+      )}
     </div>
   );
 }
